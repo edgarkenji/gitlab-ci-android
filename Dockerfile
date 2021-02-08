@@ -23,6 +23,9 @@ RUN apt-get -qq update \
       lib32z1 \
       unzip \
       locales \
+      python2.7 \
+      python-pip \
+      wget \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
@@ -47,3 +50,11 @@ RUN mkdir -p /root/.android \
 
 RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/packages.txt \
  && ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} ${PACKAGES}
+
+RUN wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz \
+ && mkdir -p /opt \
+ && tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt \
+ && /opt/google-cloud-sdk/install.sh --quiet \
+ && source /opt/google-cloud-sdk/path.bash.inc
+
+RUN gcloud components update

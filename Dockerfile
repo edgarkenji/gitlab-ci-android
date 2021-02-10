@@ -48,6 +48,12 @@ RUN mkdir -p /root/.android \
 RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/packages.txt \
  && ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} ${PACKAGES}
 
+# Add emulator
+ADD start-default-emulator.sh /opt && chmod a+x /opt/start-default-emulator.sh
+
+RUN echo "no" | avdmanager create avd -n default -k "system-images;android-30;google_apis;x86" -d 17
+
+# Install Google Cloud Platform CLI
 RUN apt-get update && apt-get upgrade -y && apt-get install python3 python3-pip wget -y
 
 ENV CLOUDSDK_INSTALL_DIR /opt/gcloud/
